@@ -1,6 +1,8 @@
 #version 430
 layout (local_size_x = 4, local_size_y = 4, local_size_z = 4) in;
 
+// Compute-based mipmapping/pre-integration inspired by http://www.naixela.com/alex/
+
 /*  Workgroup Size Stats
 
 1^3 167.00 ms
