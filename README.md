@@ -1,7 +1,7 @@
 VCTGI
 =====
 
-Real-time indirect illumination renderer using voxel cone tracing
+Real-time global illumination renderer using voxel cone tracing.
 
 ![Screenshot](Screenshot.png)
 
