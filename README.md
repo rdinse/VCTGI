@@ -5,11 +5,11 @@ Real-time indirect illumination renderer using voxel cone tracing
 
 ![Screenshot](Screenshot.png)
 
-## Compilation
+### Compilation
 
 The main parts of the renderer are located in `src/executables/VCTGI` and `src/shaders/VCTGI`.  Some parts of `src/libraries/CVK_Framework` are modified, in particular the shader classes.  The code is tested on Linux and should compile with `cmake` on Windows too.
 
-## References
+### References and Resources
 
 * https://research.nvidia.com/publication/interactive-indirect-illumination-using-voxel-cone-tracing
 * https://research.nvidia.com/publication/octree-based-sparse-voxelization-using-gpu-hardware-rasterizer
@@ -17,3 +17,4 @@ The main parts of the renderer are located in `src/executables/VCTGI` and `src/s
 * http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter42.html
 * https://github.com/domme/VoxelConeTracing
 * http://www.naixela.com/alex/
+* http://tf3dm.com/3d-model/cars-66597.html
