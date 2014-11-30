@@ -7,7 +7,7 @@ Real-time indirect illumination renderer using voxel cone tracing
 
 ## Compilation
 
-The main parts of the renderer are located in `src/executables/VCTGI` and `src/shaders/VCTGI`. The code should compile with `cmake` on both Linux and Windows. 
+The main parts of the renderer are located in `src/executables/VCTGI` and `src/shaders/VCTGI`.  Some parts of `src/libraries/CVK_Framework` are modified, in particular the shader classes.  The code is tested on Linux and should compile with `cmake` on Windows too.
 
 ## References
 
