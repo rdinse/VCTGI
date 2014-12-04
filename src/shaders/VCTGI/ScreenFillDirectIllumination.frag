@@ -27,7 +27,7 @@ float traceCone(vec3 pos, vec3 dir, float aperture, float maxTracingDistance) {
   visibleFace.x = (dir.x < 0.0) ? 0 : 1;
   visibleFace.y = (dir.y < 0.0) ? 2 : 3;
   visibleFace.z = (dir.z < 0.0) ? 4 : 5;
-  
+
   vec3 weight = abs(dir);
   float voxelSize = 1.0 / uniformVoxelRes;
   float dst = voxelSize * 2;
@@ -36,25 +36,25 @@ float traceCone(vec3 pos, vec3 dir, float aperture, float maxTracingDistance) {
   float shadowSample = 0.0;
 
   while (shadowSample <= 1.0 && dst <= maxTracingDistance) {
-    
+
     if (aperture < 0.3 && (samplePos.x < 0 || samplePos.y < 0 || samplePos.z < 0
                        || samplePos.x > 1 || samplePos.y > 1 || samplePos.z > 1)) {
-      
+
       break;
     }
-    
+
     float mipLevel = max(log2(diameter * uniformVoxelRes), 0);
 
     vec4 interpolatedSample = weight.x * textureLod(voxelTex[visibleFace.x], samplePos, mipLevel)
                             + weight.y * textureLod(voxelTex[visibleFace.y], samplePos, mipLevel)
                             + weight.z * textureLod(voxelTex[visibleFace.z], samplePos, mipLevel);
-        
+
     shadowSample += (1 - shadowSample) * interpolatedSample.a;
     dst += max(diameter, voxelSize);
     diameter = dst * aperture;
     samplePos = dir * dst + pos;
   }
-  
+
   return shadowSample;
 }
 
@@ -71,7 +71,7 @@ void main() {
     vec4 voxelPos_tmp = texture(positionMap, passUVCoord);
     voxelPos_tmp = uniformWorldToVoxelsMatrix * voxelPos_tmp;
     vec3 voxelPos = voxelPos_tmp.xyz / voxelPos_tmp.w;
-    
+
     vec4 lightPos_tmp = uniformWorldToVoxelsMatrix * vec4(uniformLightPos.xyz, 1);
     vec3 lightPos = lightPos_tmp.xyz / lightPos_tmp.w;
 
@@ -85,7 +85,7 @@ void main() {
     vec4 shadowPos = uniformLightMVP * (pos + vec4(normal, 0) * 100.0 * uniformShadowMapBias);
     shadowPos = shadowPos / shadowPos.w;
     shadowPos.xyz = shadowPos.xyz * .5 + .5;
-    
+
     float sum = 0;
     const float pcfD = 0.0006;
     for (int x = -2; x <= 2; x++) {
@@ -96,13 +96,13 @@ void main() {
     }
     shadowSample = sum / 25.0;
   }
-    
+
   // Diffuse term
   /* vec3 normalizedNormal = normalize(normal.xyz); */
   /* vec3 lightDir = -pos.xyz + uniformLightPos; */
   /* float cos_phi = clamp(dot(normalizedNormal, lightDir), 0.0, 1.0); */
   /* vec3 diffuseLight = cos_phi * uniformLightColor; */
-  
+
   /* // Attenuation */
   /* float distance = length(cameraToLight); */
   // float attenuation = 1.0 / (distance * distance);
@@ -114,16 +114,16 @@ void main() {
   if(lambertian > 0 && shadowSample > 0) {
     vec3 cameraToP = vec3(-pos.xyz + uniformCameraPos);
     vec3 viewDir = normalize(cameraToP);
-      
+
     vec3 halfDir = normalize(lightDir + viewDir);
     float specularAngle = max(dot(halfDir, normal), 0.0);
     specular = pow(specularAngle, 10);
   }
 
   fragmentColor = vec4((shadowSample + 0.04) * uniformLightColor * (lambertian + specular), 1.0);
-  
+
   // Specular term
   // vec3 specularLight = 0.1 * cos_phi * uniformLightColor * pow(max(0, dot(reflect(-lightDir, normalizedNormal), viewDir)), 3);
-	    
+
   //fragmentColor = vec4(shadowSample * (diffuseLight + specularLight), 1.0);
 }

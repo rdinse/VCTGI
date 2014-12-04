@@ -31,7 +31,7 @@ Renderer::Renderer() :
 	m_cameraLight(0, 0)
 {
 	tw_scene = SCENE_CARS;
-	
+
 	tw_renderTarget = RENDER_COMPOSITION;
 	tw_mipLevel = 0;
 	tw_updateVoxels = true;
@@ -43,8 +43,8 @@ Renderer::Renderer() :
 	tw_maximalTracingDistance = glm::sqrt(3.0f);
 	tw_ambientOcclusionFalloff = 725.0f;
 	tw_ambientOcclusionAlpha = 0.55f;
-	tw_globalIlluminationAlpha = 0.36f;
-	tw_specularAlpha = 0.25;
+	tw_globalIlluminationAlpha = 0.75f;
+	tw_specularAlpha = 1.00;
 	tw_specularAperture = 0.158;
 	tw_glossiness = 1.0f;  // TODO
 	tw_shadowMapBias = 0.000085f;
@@ -127,17 +127,17 @@ void Renderer::init() {
 	// Scene graph setup
 	m_scene = new CVK::Node("Scene", std::string(RESOURCES_PATH) + gSceneFiles[tw_scene]);
 	m_scene->setModelMatrix(gSceneModelMatrices[tw_scene]);
-	
+
 	const char* m_shadernamesVoxelViewersimpleTexture[] = {SHADERS_PATH "/VCTGI/ScreenFill.vert", SHADERS_PATH "/VCTGI/ScreenFillSimpleTexture.frag"};
 	m_simpleTextureShader = new CVK::ShaderSimpleTexture(VERTEX_SHADER_BIT|FRAGMENT_SHADER_BIT, m_shadernamesVoxelViewersimpleTexture);
-	
+
 	const char* m_shadernamesVoxelViewer[] = {SHADERS_PATH "/VCTGI/VoxelViewer.vert", SHADERS_PATH "/VCTGI/VoxelViewer.geom", SHADERS_PATH "/VCTGI/VoxelViewer.frag"};
 	m_voxelViewerShader = new ShaderVoxelViewer(VERTEX_SHADER_BIT|GEOMETRY_SHADER_BIT|FRAGMENT_SHADER_BIT, m_shadernamesVoxelViewer);
-	
+
 	m_shadowMapFBO = new CVK::FBO(tw_shadowMapSize, tw_shadowMapSize, 1, true);
 	const char* m_shadernamesShadowMap[] = {SHADERS_PATH "/VCTGI/ShadowMap.vert", SHADERS_PATH "/VCTGI/ShadowMap.frag"};
 	m_shadowMapShader = new CVK::ShaderMinimal(VERTEX_SHADER_BIT|FRAGMENT_SHADER_BIT, m_shadernamesShadowMap);
-	
+
 	// 4 attachments: Position, Normal, Color, Tangent
 	m_gBufferFBO = new CVK::FBO(Context::getInstance()->getWidth(), Context::getInstance()->getHeight(), 4, true);
 	const char *m_shadernamesGBuffer[] = {SHADERS_PATH "/VCTGI/GBuffer.vert", SHADERS_PATH "/VCTGI/GBuffer.frag"};
@@ -154,7 +154,7 @@ void Renderer::init() {
 	m_directIlluminationFBO = new CVK::FBO(Context::getInstance()->getWidth(), Context::getInstance()->getHeight(), 1);
 	const char *m_shadernamesDirectIllumination[] = {SHADERS_PATH "/VCTGI/ScreenFill.vert", SHADERS_PATH "/VCTGI/ScreenFillDirectIllumination.frag"};
 	m_directIlluminationShader = new ShaderDirectIllumination(VERTEX_SHADER_BIT|FRAGMENT_SHADER_BIT, m_shadernamesDirectIllumination);
-	
+
 	// 2 attachments: Global Illumination, Ambient Occlusion
 	m_globalIlluminationFBO = new CVK::FBO(Context::getInstance()->getWidth() / 4, Context::getInstance()->getHeight() / 4, 2, false, false, false, 4);
 	const char *m_shadernamesGlobalIllumination[] = {SHADERS_PATH "/VCTGI/ScreenFill.vert", SHADERS_PATH "/VCTGI/ScreenFillGlobalIllumination.frag"};
@@ -177,7 +177,7 @@ void Renderer::init() {
 	m_globalIlluminationShader->getUniformLocations();
 	m_compositingShader->getUniformLocations();
 
-	m_voxelizationShader->setTextureInput(2, m_shadowMapFBO->getDepthTexture());  		   // Shadow Map
+	m_voxelizationShader->setTextureInput(2, m_shadowMapFBO->getDepthTexture());           // Shadow Map
 	m_directIlluminationShader->setTextureInput(0, m_gBufferFBO->getColorTexture(0));      // Position
 	m_directIlluminationShader->setTextureInput(1, m_gBufferFBO->getColorTexture(1));      // Normals
 	m_directIlluminationShader->setTextureInput(2, m_shadowMapFBO->getDepthTexture());     // Shadow Map
@@ -190,18 +190,18 @@ void Renderer::init() {
 	m_compositingShader->setTextureInput(3, m_directIlluminationFBO->getColorTexture(0));  // Direct illumination
 	m_compositingShader->setTextureInput(4, m_globalIlluminationFBO->getColorTexture(0));  // Global illumination
 	m_compositingShader->setTextureInput(5, m_globalIlluminationFBO->getColorTexture(1));  // Ambient occlusion
-	m_FXAAShader->setTextureInput(0, m_compositingFBO->getColorTexture(0));				   // Composed image
-	m_FXAAShader->setTextureInput(1, m_gBufferFBO->getDepthTexture());				       // Depth
-	m_FXAAShader->setTextureInput(2, m_gBufferFBO->getColorTexture(1));     			   // Normals
+	m_FXAAShader->setTextureInput(0, m_compositingFBO->getColorTexture(0));				         // Composed image
+	m_FXAAShader->setTextureInput(1, m_gBufferFBO->getDepthTexture());				             // Depth
+	m_FXAAShader->setTextureInput(2, m_gBufferFBO->getColorTexture(1));     			         // Normals
 }
-	
+
 void Renderer::run() {
 	Profiler::getInstance()->updateProfilerFirst(PASS_INIT);
 
 	glPointSize(2.0f);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glEnable(GL_DEPTH_TEST);
-	
+
 	float lightT = glm::pow(glm::min(glm::abs(m_cameraLight.getPosition().x) / 3.5f, 1.0f), 3.5f);
 	Renderer::getInstance()->tw_lightColor = (1 - lightT) * glm::vec3(0.752941f, 0.749020f, 0.678431f)
 												 + lightT * glm::vec3(0.713725f, 0.494118f, 0.356863f);
@@ -338,7 +338,7 @@ void Renderer::run() {
 			glDisable(GL_BLEND);
 			glClearColor(0.0, 0.0, 0.0, 0.0);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			
+
 			if(tw_renderTarget < 3) {
 				m_simpleTextureShader->useProgram();
 				m_simpleTextureShader->setTextureInput(0, m_gBufferFBO->getColorTexture(tw_renderTarget));
@@ -410,10 +410,10 @@ void Renderer::run() {
 
 				std::cout << "Shaders reloaded." << std::endl;
 			}
-			
+
 			m_shadersNeedReloading = false;
 		}
-		
+
 		if (m_texturesNeedReinitialization) {
 			m_voxelRes = 1 << m_voxelDepth;
 			m_voxelCount = m_voxelRes * m_voxelRes * m_voxelRes;
@@ -423,7 +423,7 @@ void Renderer::run() {
 
 			m_voxelViewerShader->prepareVoxelGrid();
 			m_voxelizationShader->prepareTextures();
-			
+
 			m_texturesNeedReinitialization = false;
 		}
 

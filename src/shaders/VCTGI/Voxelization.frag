@@ -47,7 +47,7 @@ void imageAtomicRGBA8Avg(layout(r32ui) uimage3D img,
                          ivec3 coords, vec4 val3) {
 
   // Alpha channel is used a the sample counter of the moving average.
-  
+
   vec4 val = val3;//vec4(val3, 1);
   val.rgb *= 255.0f;
   uint newVal = convVec4ToRGBA8(val);
@@ -63,7 +63,7 @@ void imageAtomicRGBA8Avg(layout(r32ui) uimage3D img,
     vec4 curValF = rval + val;       // Add new value
     curValF.rgb /= (curValF.a);      // Renormalize
     newVal = convVec4ToRGBA8(curValF);
-    
+
     prevStoredVal = currStoredVal;
   }
 }
@@ -88,12 +88,12 @@ void imageAtomicRGBA8Avg(layout(r32ui) uimage3D img,
                          ivec3 coords, vec4 val) {
 
   // LSBs are used for the sample counter of the moving average.
-  
+
   val *= 255.0;
   uint newVal = encUnsignedNibble(convVec4ToRGBA8(val), 1);
   uint prevStoredVal = 0;
   uint currStoredVal;
-  
+
   int counter = 0;
   // Loop as long as destination value gets changed by other threads
   while ((currStoredVal = imageAtomicCompSwap(img, coords, prevStoredVal, newVal))
@@ -105,7 +105,7 @@ void imageAtomicRGBA8Avg(layout(r32ui) uimage3D img,
     rval /= ++n;
     rval = round(rval / 2) * 2;
     newVal = encUnsignedNibble(convVec4ToRGBA8(rval), n);
-    
+
     prevStoredVal = currStoredVal;
 
     counter++;
@@ -118,33 +118,33 @@ void main() {
 
     discard;  // Clip residue corners from conservative rasterization.
   }
-  
+
   vec3 diffuse;
   if (useColorTexture) {
     diffuse = texture(diffuseTexture, geomPass.uv).rgb;
   } else {
     diffuse = diffuseColor;
   }
-	
+
   vec4 shadowPos = uniformLightMVP * vec4(geomPass.worldPos, 1.0);
   shadowPos = shadowPos / shadowPos.w;
   shadowPos.xyz = shadowPos.xyz * .5 + .5;
   float shadowSample = texture2D(shadowMap, shadowPos.xy).x;
-  
+
   if (-shadowSample - uniformShadowMapBias + shadowPos.z < 0) {
     shadowSample = 1.0;
   } else {
     shadowSample = 0.07;
   }
-  
+
   vec3 normalizedNormal = normalize(geomPass.normal);
   vec3 lightDir = - geomPass.worldPos + uniformLightPos;
   float cos_phi = clamp(dot(normalizedNormal, lightDir), 0.0, 1.0);
   vec3 diffuseLight = cos_phi * shadowSample * uniformLightColor;
-  
+
   vec3 radiance = diffuse * diffuseLight;
   ivec3 voxelPos = ivec3(uniformVoxelRes * geomPass.voxelPos);
-  
+
   for (int axis = 0; axis < 6; axis++)
     imageAtomicRGBA8Avg(voxelMaps[axis], voxelPos, vec4(radiance, 1));
 

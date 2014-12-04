@@ -32,7 +32,7 @@ const float kernel3[9] = float[9] (1, 2, 1,
    3x3: 1.24 ms
 */
 
-// Sample positions of the 4xRGSS pattern, Y coordinate up. 
+// Sample positions of the 4xRGSS pattern, Y coordinate up.
 const ivec2 samplePositions[2][2] = ivec2[2][2] (ivec2[2] (ivec2(1, 0), ivec2(1, 1)),
                                                  ivec2[2] (ivec2(0, 0), ivec2(0, 1)));
 
@@ -54,10 +54,10 @@ vec4 upsampleBilaterally(samplerRenderbuffer map) {
   ivec2 uvCoordF = ivec2(passUVCoord * vec2(800, 600));  // TODO resolution via uniform
   ivec2 uvCoordI = ivec2(passUVCoord * vec2(400, 300));
   ivec2 kernelBias = uvCoordF % ivec2(2);
-  
+
   vec4 centerN = texelFetch(normalMap, uvCoordF, 0);
   vec4 centerD = texelFetch(depthMap, uvCoordF, 0);
-  
+
   const int kernelRadius = 2;
   const int kernelSize = 5;
   const float kernel[] = kernel5;
@@ -68,13 +68,13 @@ vec4 upsampleBilaterally(samplerRenderbuffer map) {
     for (int x = -kernelRadius; x <= kernelRadius; x++) {
       ivec2 coord = uvCoordI + ivec2(x, y);
       ivec2 kernelCoord = ivec2(x, y) + ivec2(kernelRadius);
-      
+
       // Match sample position of RGSS pattern
       ivec2 patternFraction = coord % ivec2(2);
       ivec2 coordF = 2 * coord + samplePositions[patternFraction.y][patternFraction.x];
       vec2 coordFf = texelSize * coordF;
-      
-      
+
+
       /*
         ivec2 biased = kernelCoord - kernelBias + samplePositions[kernelBias.y][1-kernelBias.x] - ivec2(1);
       float kernelWeight = 1;
@@ -83,20 +83,20 @@ vec4 upsampleBilaterally(samplerRenderbuffer map) {
         }*/
 
       float kernelWeight = kernel[kernelSize * kernelCoord.x + kernelCoord.y];
-      
+
       float weightN = similarity(centerN, texelFetch(normalMap, coordF, 0), 1.0);
       float weightD = similarity(centerD, texelFetch(depthMap, coordF, 0), 100.0);
       // TODO adaptive depth scaling (max - min)
-      
+
       ivec3 coordS = uvToSampleCoords(coord);
       vec4 texelSample = max(vec4(0), texelFetchRenderbuffer(map, coordS.xy, coordS.z));
-      
+
       float weight = kernelWeight * weightN * weightD;
       val += texelSample * weight;
       weightSum += weight;
     }
   }
-  
+
   return val / weightSum;
 }
 
@@ -104,13 +104,13 @@ void main() {
 
   vec4 color = texture(colorMap, passUVCoord);
   vec4 directIllumination = texture(directIlluminationMap, passUVCoord);
-  
+
   vec4 globalIllumination = vec4(upsampleBilaterally(globalIlluminationMap).rgb, 1);
   float ambientOcclusion = upsampleBilaterally(ambientOcclusionMap).x;
-  
-  fragColor = clamp((color * 2.5 * (0.4 * directIllumination + globalIllumination * uniformGlobalIlluminationAlpha))
-                       * (1 - uniformAmbientOcclusionAlpha * (1 - pow(ambientOcclusion, 2))), 0.0, 1.0);
-  
+
+  fragColor = clamp((color * (directIllumination + globalIllumination * uniformGlobalIlluminationAlpha))
+                       * (1 - uniformAmbientOcclusionAlpha * (1 - ambientOcclusion)), 0.0, 1.0);
+
   /*
     ivec3 coord = uvToSampleCoords(ivec2(passUVCoord * vec2(400, 300)));
     globalIllumination = texelFetchRenderbuffer(globalIlluminationMap, coord.xy, coord.z);
@@ -123,5 +123,5 @@ void main() {
   /* gl_FragColor = clamp((color * 2.5
                         * (0.4 * directIllumination + pow(globalIllumination, vec4(uniformGlobalIlluminationAlpha)))
                         ) * (1 - uniformAmbientOcclusionAlpha * (1 - ambientOcclusion)), 0.0, 1.0);  // Gamma */
-  
+
 }

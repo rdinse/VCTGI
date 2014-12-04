@@ -26,7 +26,7 @@ uniform int uniformVoxelRes;
 flat out vec4 triangleBoundingBox;
 
 void main() {
-  const bool conservatively = true;
+  const bool conservatively = false;
 
   mat4 viewMatrix;
   vec3 absNormal = abs(vertPass[0].normal);
@@ -37,7 +37,7 @@ void main() {
   } else {
     viewMatrix = uniformViewMatrixZ;
   }
-  
+
   mat4 viewProjectionMatrix = uniformProjectionMatrix * viewMatrix;
   mat4 viewProjectionInverseMatrix = inverse(viewProjectionMatrix);
 
@@ -54,16 +54,16 @@ void main() {
   triangleBoundingBox = (triangleBoundingBox * vec4(0.5) + vec4(0.5)) * uniformVoxelRes;
   triangleBoundingBox.xy -= vec2(1.0);
   triangleBoundingBox.zw += vec2(1.0);
-  
+
   // Calculate normal equation of triangle plane.
   vec3 normal = cross(vsProjs[1].xyz - vsProjs[0].xyz, vsProjs[0].xyz - vsProjs[2].xyz);
   normal = projNormal.xyz;
   float d = dot(vsProjs[0].xyz, normal);
   float normalSign = (projNormal.z > 0) ? 1.0 : -1.0;
-  
+
   // Convert edges to homogeneous line equations and dilate triangle.
   // See:  http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter42.html
-  vec3 planes[3]; vec3 intersection[3]; float z[3]; 
+  vec3 planes[3]; vec3 intersection[3]; float z[3];
   vec2 halfPixelSize = vec2(1.0 / uniformVoxelRes);
   planes[0] = cross(vsProjs[0].xyw - vsProjs[2].xyw, vsProjs[2].xyw);
   planes[1] = cross(vsProjs[1].xyw - vsProjs[0].xyw, vsProjs[0].xyw);
@@ -83,7 +83,7 @@ void main() {
   vsProjs[0].xyz = vec3(intersection[0].xy, z[0]);
   vsProjs[1].xyz = vec3(intersection[1].xy, z[1]);
   vsProjs[2].xyz = vec3(intersection[2].xy, z[2]);
-  
+
   // Pass vertex data.
   for (int i = 0; i < gl_in.length(); i++) {
     if(conservatively) {
@@ -93,7 +93,7 @@ void main() {
       gl_Position = viewProjectionMatrix * gl_in[i].gl_Position;
       geomPass.voxelPos = (uniformWorldToVoxelsMatrix * gl_in[i].gl_Position).xyz;
     }
-    
+
     geomPass.worldPos = gl_in[i].gl_Position.xyz / gl_in[i].gl_Position.w;
     geomPass.normal = vertPass[i].normal;
     geomPass.uv = vertPass[i].uv;
