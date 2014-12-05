@@ -7,7 +7,7 @@ Real-time global illumination renderer using voxel cone tracing.
 
 ### Compilation
 
-The main parts of the renderer are located in `src/executables/VCTGI` and `src/shaders/VCTGI`.  Some parts of `src/libraries/CVK_Framework` are modified, in particular the shader classes.  Empty space skipping, conservative rasterization and soft shadows can be enabled in the shaders `Voxelization.geom`, `DirectIllumination.frag` and `Globalllumination.frag` respectively.  The code is tested on Linux and should compile with `cmake` on Windows too.
+The main parts of the renderer are located in `src/executables/VCTGI` and `src/shaders/VCTGI`.  Some classes in `src/libraries/CVK_Framework` are modified, in particular `CVK_ShaderSet`.  Empty space skipping, conservative rasterization and soft shadows can be enabled in the shaders `Voxelization.geom`, `DirectIllumination.frag` and `Globalllumination.frag` respectively.  The code is tested on Linux and should compile with `cmake` on Windows too.
 
 ### References and Resources
 
