@@ -12,7 +12,7 @@ The main parts of the renderer are located in `src/executables/VCTGI` and `src/s
 ### System Requirements
 
 * OpenGL 4.4
-* NVIDIA grphics card
+* NVIDIA graphics card
 * 1GB video RAM
 
 ### References and Resources
