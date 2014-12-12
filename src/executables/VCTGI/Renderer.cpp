@@ -190,9 +190,9 @@ void Renderer::init() {
 	m_compositingShader->setTextureInput(3, m_directIlluminationFBO->getColorTexture(0));  // Direct illumination
 	m_compositingShader->setTextureInput(4, m_globalIlluminationFBO->getColorTexture(0));  // Global illumination
 	m_compositingShader->setTextureInput(5, m_globalIlluminationFBO->getColorTexture(1));  // Ambient occlusion
-	m_FXAAShader->setTextureInput(0, m_compositingFBO->getColorTexture(0));				         // Composed image
-	m_FXAAShader->setTextureInput(1, m_gBufferFBO->getDepthTexture());				             // Depth
-	m_FXAAShader->setTextureInput(2, m_gBufferFBO->getColorTexture(1));     			         // Normals
+	m_FXAAShader->setTextureInput(0, m_compositingFBO->getColorTexture(0));                // Composed image
+	m_FXAAShader->setTextureInput(1, m_gBufferFBO->getDepthTexture());                     // Depth
+	m_FXAAShader->setTextureInput(2, m_gBufferFBO->getColorTexture(1));                    // Normals
 }
 
 void Renderer::run() {
