@@ -244,7 +244,7 @@ void Context::initAntTweakBarAndProfiler() {
 	TwAddVarRW(tw_tweakBar, "specularAlpha", TW_TYPE_FLOAT, &Renderer::getInstance()->tw_specularAlpha,
 			"step='0.01' max='2.0' min='0.0' label='Specular Cone' group='General'");
 	TwAddVarRW(tw_tweakBar, "specularAperture", TW_TYPE_FLOAT, &Renderer::getInstance()->tw_specularAperture,
-			"step='0.001' max='1.0' min='0.000' label='Shininess (Cone Radius)' group='General'");
+			"step='0.001' max='1.0' min='0.017' label='Shininess (Cone Radius)' group='General'");
 	TwAddVarRW(tw_tweakBar, "globalIlluminationAlpha", TW_TYPE_FLOAT, &Renderer::getInstance()->tw_globalIlluminationAlpha,
 			"step='0.01' max='2.0' min='0.0' label='Global Illumination' group='General'");
 	TwAddVarRW(tw_tweakBar, "ambientOcclusionAlpha", TW_TYPE_FLOAT, &Renderer::getInstance()->tw_ambientOcclusionAlpha,
