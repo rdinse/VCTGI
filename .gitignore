@@ -33,6 +33,7 @@ ipch/
 
 #Emacs temp files
 *~
+~*
 
 #Tooling
 _ReSharper*/
