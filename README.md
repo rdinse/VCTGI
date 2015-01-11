@@ -20,7 +20,9 @@ The main parts of the renderer are located in `src/executables/VCTGI` and `src/s
 * https://research.nvidia.com/publication/interactive-indirect-illumination-using-voxel-cone-tracing
 * https://research.nvidia.com/publication/octree-based-sparse-voxelization-using-gpu-hardware-rasterizer
 * http://maverick.inria.fr/Membres/Cyril.Crassin/thesis/
+* http://rauwendaal.net/phd-thesis/
 * http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter42.html
 * https://github.com/domme/VoxelConeTracing
 * http://www.naixela.com/alex/
+* http://simonstechblog.blogspot.de/2013/01/implementing-voxel-cone-tracing.html
 * http://tf3dm.com/3d-model/cars-66597.html
