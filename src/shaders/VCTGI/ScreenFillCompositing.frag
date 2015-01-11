@@ -149,7 +149,7 @@ void main() {
   float ambientOcclusion = upsampleBilaterally(ambientOcclusionMap).x;
 
   fragColor = clamp(color * (directIllumination + globalIllumination * uniformGlobalIlluminationAlpha), 0.0, 1.0);
-  fragColor = (1 - uniformAmbientOcclusionAlpha) * fragColor + uniformAmbientOcclusionAlpha * ambientOcclusion * fragColor;
+  fragColor = min(uniformAmbientOcclusionAlpha + ambientOcclusion, 1) * fragColor;
 
   /*
     ivec3 coord = uvToSampleCoords(ivec2(passUVCoord * vec2(400, 300)));

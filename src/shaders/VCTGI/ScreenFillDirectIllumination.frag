@@ -79,7 +79,7 @@ void main() {
     float lightDistance = length(lightDir);
     lightDir = normalize(lightDir);
 
-    shadowSample = max(0.0, 1.0 - traceCone(voxelPos, lightDir, 0.21, lightDistance));
+    shadowSample = max(0.0, 1.0 - traceCone(voxelPos, lightDir, 0.01, lightDistance));
   } else {
     // Shadow map lookup
     vec4 shadowPos = uniformLightMVP * (pos + vec4(normal, 0) * 100.0 * uniformShadowMapBias);

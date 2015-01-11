@@ -42,7 +42,7 @@ Renderer::Renderer() :
 	tw_percentageCloserFiltering = false;  // TODO
 	tw_maximalTracingDistance = glm::sqrt(3.0f);
 	tw_ambientOcclusionFalloff = 725.0f;
-	tw_ambientOcclusionAlpha = 0.27f;
+	tw_ambientOcclusionAlpha = 0.50f;
 	tw_globalIlluminationAlpha = 0.75f;
 	tw_specularAlpha = 1.00;
 	tw_specularAperture = 0.158;
