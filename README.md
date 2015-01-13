@@ -1,7 +1,7 @@
 VCTGI
 =====
 
-Real-time global illumination renderer using voxel cone tracing.
+Real-time global illumination renderer using voxel cone tracing (without SVO).
 
 ![Screenshot](Screenshot.png)
 
