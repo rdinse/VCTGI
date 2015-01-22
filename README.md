@@ -22,6 +22,8 @@ The main parts of the renderer are located in `src/executables/VCTGI` and `src/s
 * http://maverick.inria.fr/Membres/Cyril.Crassin/thesis/
 * http://rauwendaal.net/phd-thesis/
 * http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter42.html
+* http://on-demand-gtc.gputechconf.com/gtcnew/on-demand-gtc.php?searchByKeyword=panteleev&submit=
+* http://on-demand.gputechconf.com/gtc/2014/presentations/S4552-rt-voxel-based-global-illumination-gpus.pdf
 * https://github.com/domme/VoxelConeTracing
 * http://www.naixela.com/alex/
 * http://simonstechblog.blogspot.de/2013/01/implementing-voxel-cone-tracing.html
