@@ -9,6 +9,8 @@ Real-time global illumination renderer using voxel cone tracing (without SVO).
 
 The main parts of the renderer are located in `src/executables/VCTGI` and `src/shaders/VCTGI`.  Some classes in `src/libraries/CVK_Framework` are modified, in particular `CVK_ShaderSet`.  Empty space skipping, conservative rasterization and soft shadows can be enabled in the shaders `Voxelization.geom`, `DirectIllumination.frag` and `Globalllumination.frag` respectively.  The code is tested on Linux and should compile with `cmake` on Windows too.
 
+Please refer to [my thesis](https://github.com/rdinse/VCTGI/raw/master/BA_Dinse_Robin.pdf) [PDF, 8.9 MB] for further details of the implementation.
+
 ### System Requirements
 
 * OpenGL 4.4
